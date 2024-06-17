@@ -1,8 +1,9 @@
-import Checklists from 'eam-components/dist/ui/components/checklists/Checklists';
-import Comments from 'eam-components/dist/ui/components/comments/Comments';
+// 导入用于工单页面的各种UI组件和工具
+import Checklists from 'eam-components/dist/ui/components/checklists/Checklists'; // 检查列表组件
+import Comments from 'eam-components/dist/ui/components/comments/Comments'; // 评论组件
 import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
-import BlockUi from 'react-block-ui';
+import BlockUi from 'react-block-ui'; // UI阻塞组件，用于加载时显示遮罩
 import WSEquipment from "../../../tools/WSEquipment";
 import WSWorkorder from "../../../tools/WSWorkorders";
 import {ENTITY_TYPE} from "../../components/Toolbar";
@@ -54,104 +55,138 @@ import FunctionsRoundedIcon from '@mui/icons-material/FunctionsRounded';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 
+// 定义一个异步函数，用于获取指定设备和标准工作订单的最大步骤信息
 const getEquipmentStandardWOMaxStep = async (eqCode, swoCode) => {
+    // 检查设备代码和标准工作订单代码是否存在，如果任一不存在，则函数返回，不执行后续操作
     if (!eqCode || !swoCode) {
         return;
     }
+    // 使用WSWorkorder服务的getEquipmentStandardWOMaxStep方法，传入设备代码和标准工作订单代码，从服务器获取数据
     const response = await WSWorkorder.getEquipmentStandardWOMaxStep(eqCode, swoCode);
+    // 返回从服务器获取的数据中的主体部分
     return response.body.data;
 }
 
+// 定义Workorder组件
 const Workorder = () => {
-    const history = useHistory();
-    const [equipmentMEC, setEquipmentMEC] = useState();
-    const [equipment, setEquipment] = useState();
-    const [equipmentPart, setEquipmentPart] = useState();
-    const [statuses, setStatuses] = useState([]);
-    const [otherIdMapping, setOtherIdMapping] = useState({})
-    const [expandChecklistsOptions, setExpandChecklistsOptions] = useState(false)
-    const checklists = useRef(null);
+    const history = useHistory(); // 用于导航历史
+    const [equipmentMEC, setEquipmentMEC] = useState(); // 状态：设备MEC信息
+    const [equipment, setEquipment] = useState(); // 状态：设备信息
+    const [equipmentPart, setEquipmentPart] = useState(); // 状态：设备部件信息
+    const [statuses, setStatuses] = useState([]); // 状态：状态列表
+    const [otherIdMapping, setOtherIdMapping] = useState({}) // 状态：其他ID映射
+    const [expandChecklistsOptions, setExpandChecklistsOptions] = useState(false) // 状态：是否展开检查列表选项
+    const checklists = useRef(null); // Ref：检查列表组件的引用
     const dispatch = useDispatch();
-    const updateMyWorkOrdersConst = (...args) => dispatch(updateMyWorkOrders(...args));
-    //
-    //
-    //
-    const {screenLayout: workOrderLayout, entity: workorder, setEntity: setWorkOrder, loading, readOnly, isModified,
-        screenPermissions, screenCode, userData, applicationData, newEntity, commentsComponent,
-        isHiddenRegion, getHiddenRegionState, getUniqueRegionID,
-        toggleHiddenRegion, setRegionVisibility, setLayoutProperty,
-        newHandler, saveHandler, deleteHandler, copyHandler, updateEntityProperty: updateWorkorderProperty, register,
-        handleError, showError, showNotification, showWarning, createEntity, setLoading, setReadOnly} = useEntity({
-            WS: {
-                create: WSWorkorder.createWorkOrder,
-                read: WSWorkorder.getWorkOrder,
-                update: WSWorkorder.updateWorkOrder,
-                delete: WSWorkorder.deleteWorkOrder,
-                new:  WSWorkorder.initWorkOrder,
-            },
-            postActions: {
-                read: postRead,
-                new: postInit,
-                copy: postCopy
-            },
-            handlers: {
-                standardWO: onChangeStandardWorkOrder,
-                equipmentCode: onChangeEquipment
-            },
-            isReadOnlyCustomHandler: isReadOnlyCustomHandler,
-            entityCode: "EVNT",
-            entityDesc: "Work Order",
-            entityURL: "/workorder/",
-            entityCodeProperty: "number",
-            screenProperty: "workOrderScreen",
-            layoutProperty: "workOrderLayout",
-            layoutPropertiesMap,
-            onMountHandler: mountHandler,
-            onUnmountHandler: unmountHandler,
-            codeQueryParamName: "workordernum"
+    const updateMyWorkOrdersConst = (...args) => dispatch(updateMyWorkOrders(...args)); // 封装dispatch的函数
+
+    // useEntity 是一个自定义 React 钩子，用于管理实体（如设备、位置等）的 CRUD（创建、读取、更新、删除）操作和状态。这个钩子封装了与实体相关的逻辑，使得组件可以更简洁地处理实体数据
+    const {
+        screenLayout: workOrderLayout, // 工单的屏幕布局
+        entity: workorder, // 当前工单实体
+        setEntity: setWorkOrder, // 设置工单实体的函数
+        loading, // 加载状态
+        readOnly, // 只读状态
+        isModified, // 工单是否被修改
+        screenPermissions, // 屏幕权限
+        screenCode, // 屏幕代码
+        userData, // 用户数据
+        applicationData, // 应用程序数据
+        newEntity, // 是否为新建实体
+        commentsComponent, // 评论组件的引用
+        isHiddenRegion, // 是否隐藏区域
+        getHiddenRegionState, // 获取隐藏区域状态的函数
+        getUniqueRegionID, // 获取唯一区域ID的函数
+        toggleHiddenRegion, // 切换隐藏区域的函数
+        setRegionVisibility, // 设置区域可见性的函数
+        setLayoutProperty, // 设置布局属性的函数
+        newHandler, // 新建处理函数
+        saveHandler, // 保存处理函数
+        deleteHandler, // 删除处理函数
+        copyHandler, // 复制处理函数
+        updateEntityProperty: updateWorkorderProperty, // 更新工单属性的函数
+        register, // 注册函数
+        handleError, // 处理错误的函数
+        showError, // 显示错误的函数
+        showNotification, // 显示通知的函数
+        showWarning, // 显示警告的函数
+        createEntity, // 创建实体的函数
+        setLoading, // 设置加载状态的函数
+        setReadOnly // 设置只读状态的函数
+    } = useEntity({
+        WS: {
+            create: WSWorkorder.createWorkOrder, // 创建工单的Web服务
+            read: WSWorkorder.getWorkOrder, // 读取工单的Web服务
+            update: WSWorkorder.updateWorkOrder, // 更新工单的Web服务
+            delete: WSWorkorder.deleteWorkOrder, // 删除工单的Web服务
+            new:  WSWorkorder.initWorkOrder, // 初始化新工单的Web服务
+        },
+        postActions: {
+            read: postRead, // 读取后的操作
+            new: postInit, // 新建后的初始化操作
+            copy: postCopy // 复制后的操作
+        },
+        handlers: {
+            standardWO: onChangeStandardWorkOrder, // 标准工单更改处理
+            equipmentCode: onChangeEquipment // 设备代码更改处理
+        },
+        isReadOnlyCustomHandler: isReadOnlyCustomHandler, // 自定义只读状态处理函数
+        entityCode: "EVNT", // 实体代码
+        entityDesc: "Work Order", // 实体描述
+        entityURL: "/workorder/", // 实体URL
+        entityCodeProperty: "number", // 实体代码属性
+        screenProperty: "workOrderScreen", // 屏幕属性
+        layoutProperty: "workOrderLayout", // 布局属性
+        layoutPropertiesMap, // 布局属性映射
+        onMountHandler: mountHandler, // 挂载时的处理函数
+        onUnmountHandler: unmountHandler, // 卸载时的处理函数
+        codeQueryParamName: "workordernum" // 代码查询参数名称
     });
 
-    //
-    //
-    //
-
-    useEffect( () => {
+    // 使用useEffect钩子来处理设备信息的加载
+    useEffect(() => {
+        // 初始化时清空设备和设备部件的状态
         setEquipment(null);
         setEquipmentPart(null);
 
+        // 如果当前工单没有设备代码，则不执行任何操作
         if (!workorder?.equipmentCode) {
             return;
         }
 
+        // 使用WSEquipment服务获取指定设备的详细信息
         WSEquipment.getEquipment(workorder.equipmentCode)
         .then(response => {
-            const equipmentResponse = response.body.data;
-            setEquipment(equipmentResponse);
+            const equipmentResponse = response.body.data; // 从响应中提取设备数据
+            setEquipment(equipmentResponse); // 设置设备状态
+
+            // 如果设备有部件代码，进一步获取部件信息
             if (equipmentResponse.partCode) {
                 WSParts.getPart(equipmentResponse.partCode)
-                .then(response => setEquipmentPart(response.body.data))
-                .catch(console.error);
+                .then(response => setEquipmentPart(response.body.data)) // 设置设备部件状态
+                .catch(console.error); // 处理获取部件信息的错误
             }
         })
-        .catch(console.error);
+        .catch(console.error); // 处理获取设备信息的错误
 
-    }, [workorder?.equipmentCode])
+    }, [workorder?.equipmentCode]); // 依赖项：当工单的设备代码变化时，重新执行此逻辑
 
-    //
-    //
-    //
+    // 定义一个函数，用于处理设备代码的变更
     function onChangeEquipment(equipmentCode) {
+        // 如果设备代码为空，则不执行任何操作
         if(!equipmentCode) {
             return;
         }
 
+        // 同时获取设备的详细信息和设备的线性详情
         Promise.all([
-            WSEquipment.getEquipment(equipmentCode),
-            WSWorkorders.getWOEquipLinearDetails(equipmentCode),
-        ]).then( response => {
-            const equipment = response[0].body.data;
-            const linearDetails = response[1].body.data;
+            WSEquipment.getEquipment(equipmentCode), // 获取设备详细信息
+            WSWorkorders.getWOEquipLinearDetails(equipmentCode), // 获取设备的线性详情
+        ]).then(response => {
+            const equipment = response[0].body.data; // 设备详细信息
+            const linearDetails = response[1].body.data; // 设备的线性详情
 
+            // 更新工单状态，包括部门代码、位置代码、成本代码和保修状态
             setWorkOrder(oldWorkOrder => ({
                 ...oldWorkOrder,
                 departmentCode: equipment.departmentCode,
@@ -163,25 +198,33 @@ const Workorder = () => {
                 warranty: linearDetails.ISWARRANTYACTIVE
             }))
 
+            // 如果设备处于保修期，显示警告信息
             if (linearDetails.ISWARRANTYACTIVE === 'true') {
                 showWarning('This equipment is currently under warranty.');
             }
         })
-        .catch(console.error);
-
+        .catch(console.error); // 处理任何错误
     };
 
+    // 定义一个函数，用于处理标准工作订单代码的变更
     function onChangeStandardWorkOrder(standardWorkOrderCode) {
+        // 如果标准工作订单代码存在
         if (standardWorkOrderCode) {
+            // 获取标准工作订单的详细信息
             WSWorkorder.getStandardWorkOrder(standardWorkOrderCode)
-            .then(response => setWorkOrder( oldWorkOrder => assignStandardWorkOrderValues(oldWorkOrder, response.body.data)))
-            .catch(console.error);
+            .then(response => {
+                // 更新工单状态，根据标准工作订单的详细信息
+                setWorkOrder(oldWorkOrder => assignStandardWorkOrderValues(oldWorkOrder, response.body.data))
+            })
+            .catch(console.error); // 处理任何错误
         }
     }
 
+    // 定义一个函数，用于获取工单页面的各个区域配置
     const getRegions = () => {
-        const { tabs } = workOrderLayout;
+        const { tabs } = workOrderLayout; // 从工单布局中获取标签信息
 
+        // 定义常用的属性，以便在多个区域中重用
         const commonProps = {
             workorder,
             newEntity,
@@ -190,13 +233,15 @@ const Workorder = () => {
             updateWorkorderProperty,
             register
         };
+        console.log("screenPermissions", screenPermissions, register)
 
+        // 返回一个数组，包含所有区域的配置
         return [
             {
-                id: 'DETAILS',
-                label: 'Details',
-                isVisibleWhenNewEntity: true,
-                maximizable: false,
+                id: 'DETAILS', // 区域标识符
+                label: 'Details', // 区域标签
+                isVisibleWhenNewEntity: true, // 新实体时是否可见
+                maximizable: false, // 是否可以最大化
                 render: () =>
                     <WorkorderGeneral
                         {...commonProps}
@@ -209,11 +254,11 @@ const Workorder = () => {
                         screenPermissions={screenPermissions}
                         setLayoutProperty={setLayoutProperty}/>
                 ,
-                column: 1,
-                order: 1,
-                summaryIcon: AssignmentIcon,
-                ignore: !getTabAvailability(tabs, TAB_CODES.RECORD_VIEW),
-                initialVisibility: getTabInitialVisibility(tabs, TAB_CODES.RECORD_VIEW)
+                column: 1, // 所在列
+                order: 1, // 排序顺序
+                summaryIcon: AssignmentIcon, // 摘要图标
+                ignore: !getTabAvailability(tabs, TAB_CODES.RECORD_VIEW), // 是否忽略此区域
+                initialVisibility: getTabInitialVisibility(tabs, TAB_CODES.RECORD_VIEW) // 初始可见性
             },
             {
                 id: 'SCHEDULING',
@@ -542,10 +587,12 @@ const Workorder = () => {
         ];
     }
 
+    // 定义一个函数，用于计算下一个步骤的编号
     const getNextStep = (n) => n ? (([integ, deci]) => +(integ + "." + (+(deci || 0) + 1)))(n.split(".")) : "";
 
+    // 定义一个异步函数，用于处理重复步骤的逻辑
     const repeatStepHandler = async () => {
-        setLoading(true);
+        setLoading(true); // 设置加载状态为true
         const fields = workOrderLayout.fields;
         const { customField, number, equipmentCode, standardWO, parentWO, departmentCode, locationCode } = workorder;
         try {
@@ -579,11 +626,12 @@ const Workorder = () => {
     }
     //
     // CALLBACKS FOR ENTITY CLASS
-    //
+    // 回调函数，用于实体类的初始化
     function postInit() {
         readStatuses('', '', true);
     }
 
+    // 回调函数，用于读取工单后的处理
     function postRead(workorder) {
         setLayoutProperty('equipment', {code: workorder.equipmentCode, organization: workorder.equipmentOrganization});
         updateMyWorkOrdersConst(workorder);
@@ -591,6 +639,7 @@ const Workorder = () => {
         readOtherIdMapping(workorder.number);
     }
 
+    // 回调函数，用于复制工单后的处理
     function postCopy() {
         readStatuses('', '', true);
         let fields = workOrderLayout.fields;
@@ -602,24 +651,27 @@ const Workorder = () => {
 
     //
     // DROP DOWN VALUES
-    //
+    // 读取工单状态值
     const readStatuses = (status, type, newwo) => {
         WSWorkorder.getWorkOrderStatusValues(userData.eamAccount.userGroup, status, type, newwo)
             .then(response => setStatuses(response.body.data))
             .catch(console.error);
     }
 
+    // 添加活动后的处理器
     const postAddActivityHandler = () => {
         //Refresh the activities in the checklist
         checklists.current && checklists.current.readActivities(workorder.number);
     };
 
+    // 读取其他ID映射
     const readOtherIdMapping = (number) => {
         WSWorkorder.getWOEquipToOtherIdMapping(number)
             .then(response => setOtherIdMapping(response.body.data))
             .catch(error => console.error('readOtherIdMapping', error))
     }
 
+    // 挂载处理器
     function mountHandler() {
         setLayoutProperty('eqpTreeMenu', [{
             desc: "Use for this Work Order",
@@ -631,58 +683,67 @@ const Workorder = () => {
         }])
     }
 
+    // 卸载处理器
     function unmountHandler() {
         setLayoutProperty('eqpTreeMenu', null);
     }
 
+    // 如果没有工单数据，不渲染任何内容
     if (!workorder) {
         return React.Fragment;
     }
 
+    // 主渲染部分，包括工具栏和实体区域
     return (
+        // 工单的主容器
         <div className="entityContainer">
+            {/* BlockUi组件用于在数据加载时显示遮罩层，防止用户操作 */}
             <BlockUi tag="div" blocking={loading} style={{height: "100%", width: "100%"}}>
+                {/* 工具栏容器，包含工单的操作按钮和信息 */}
                 <EamlightToolbarContainer
-                    isModified={isModified}
-                    newEntity={newEntity}
-                    entityScreen={screenPermissions}
-                    entityName="Work Order"
-                    entityKeyCode={workorder.number}
-                    organization={workorder.organization}
-                    saveHandler={saveHandler}
-                    newHandler={newHandler}
-                    deleteHandler={deleteHandler}
-                    width={790}
+                    isModified={isModified} // 是否修改过，用于控制保存按钮的启用状态
+                    newEntity={newEntity} // 是否为新建的实体
+                    entityScreen={screenPermissions} // 实体的权限信息
+                    entityName="Work Order" // 实体名称
+                    entityKeyCode={workorder.number} // 工单编号
+                    organization={workorder.organization} // 组织信息
+                    saveHandler={saveHandler} // 保存操作的处理函数
+                    newHandler={newHandler} // 新建操作的处理函数
+                    deleteHandler={deleteHandler} // 删除操作的处理函数
+                    width={790} // 工具栏的宽度
                     toolbarProps={{
-                        entity: workorder,
-                        equipment: equipment,
+                        entity: workorder, // 当前的工单对象
+                        equipment: equipment, // 相关的设备对象
                         // postInit: this.postInit.bind(this),
                         // setLayout: this.setLayout.bind(this),
-                        newEntity,
-                        applicationData: applicationData,
-                        userGroup: userData.eamAccount.userGroup,
-                        screencode: screenCode,
-                        copyHandler: copyHandler,
-                        repeatStepHandler: repeatStepHandler,
-                        entityDesc: "Work Order",
-                        entityType: ENTITY_TYPE.WORKORDER,
-                        screens: userData.screens,
-                        workorderScreencode: userData.workOrderScreen,
-                        departmentalSecurity: userData.eamAccount.departmentalSecurity,
+                        newEntity, // 是否为新建的实体
+                        applicationData: applicationData, // 应用程序数据
+                        userGroup: userData.eamAccount.userGroup, // 用户组信息
+                        screencode: screenCode, // 屏幕代码
+                        copyHandler: copyHandler, // 复制操作的处理函数
+                        repeatStepHandler: repeatStepHandler, // 重复步骤操作的处理函数
+                        entityDesc: "Work Order", // 实体描述
+                        entityType: ENTITY_TYPE.WORKORDER, // 实体类型
+                        screens: userData.screens, // 用户的屏幕信息
+                        workorderScreencode: userData.workOrderScreen, // 工单屏幕代码
+                        departmentalSecurity: userData.eamAccount.departmentalSecurity, // 部门安全信息
                     }}
-                    entityIcon={<ContentPasteIcon style={{height: 18}}/>}
-                    toggleHiddenRegion={toggleHiddenRegion}
-                    regions={getRegions()}
-                    getUniqueRegionID={getUniqueRegionID}
-                    getHiddenRegionState={getHiddenRegionState}
-                    isHiddenRegion={isHiddenRegion} />
+                    entityIcon={<ContentPasteIcon style={{height: 18}}/>} // 实体图标
+                    toggleHiddenRegion={toggleHiddenRegion} // 切换隐藏区域的函数
+                    regions={getRegions()} // 获取区域的函数
+                    getUniqueRegionID={getUniqueRegionID} // 获取唯一区域ID的函数
+                    getHiddenRegionState={getHiddenRegionState} // 获取隐藏区域状态的函数
+                    isHiddenRegion={isHiddenRegion} // 是否为隐藏区域
+                />
+                {/* 实体区域组件，用于显示和管理工单的不同区域 */}
                 <EntityRegions
-                    regions={getRegions()}
-                    isNewEntity={newEntity}
-                    getUniqueRegionID={getUniqueRegionID}
-                    getHiddenRegionState={getHiddenRegionState}
-                    setRegionVisibility={setRegionVisibility}
-                    isHiddenRegion={isHiddenRegion} />
+                    regions={getRegions()} // 获取区域的函数
+                    isNewEntity={newEntity} // 是否为新建的实体
+                    getUniqueRegionID={getUniqueRegionID} // 获取唯一区域ID的函数
+                    getHiddenRegionState={getHiddenRegionState} // 获取隐藏区域状态的函数
+                    setRegionVisibility={setRegionVisibility} // 设置区域可见性的函数
+                    isHiddenRegion={isHiddenRegion}  // 是否为隐藏区域
+                />
             </BlockUi>
         </div>
     )

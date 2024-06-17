@@ -19,11 +19,13 @@ import EAMTimePicker from 'eam-components/dist/ui/components/inputs-ng/EAMTimePi
  * Display detail of an activity
  */
 function AddActivityDialog(props) {
-
+    // 状态：loading控制加载遮罩的显示
     let [loading, setLoading] = useState(false);
+    // 状态：formValues存储表单中的数据
     let [formValues, setFormValues] = useState({});
 
     useEffect(() => {
+        // 在对话框打开时初始化表单数据
         if (props.open) {
             init()
         }
@@ -42,26 +44,31 @@ function AddActivityDialog(props) {
         });
     };
 
+    // 关闭对话框
     let handleClose = () => {
         props.onClose();
     };
 
+    // 保存活动数据
     let handleSave = () => {
         // Populate trade code
+        // 根据活动代码筛选活动，获取交易代码
         let tradeCode = "";
         let filteredActivities = props.activities.filter(activity => activity.activityCode === formValues.activityCode);
         if (filteredActivities.length === 1) {
             tradeCode = filteredActivities[0].tradeCode;
         }
 
+        // 构建要保存的活动数据
         let bookingLabour = {
             ...formValues,
             'startTime': convertTimeToSeconds(formValues['startTime']),
             'endTime': convertTimeToSeconds(formValues['endTime']),
             tradeCode
         }
-        delete bookingLabour.departmentDesc;
+        delete bookingLabour.departmentDesc; // 删除不需要的字段
 
+        // 发送保存请求
         setLoading(true);
         WSWorkorders.createBookingLabour(bookingLabour)
             .then(WSWorkorders.getWorkOrder.bind(null, props.workorderNumber))
@@ -76,7 +83,7 @@ function AddActivityDialog(props) {
                 } else if (props.updateCount !== workorder.updateCount
                     || props.startDate !== workorder.startDate) {
                     // an unexpected situation has happened, reload the page
-                    window.location.reload();
+                    window.location.reload(); // 重新加载页面处理数据不一致情况
                 }
 
                 props.showNotification("Booking labour successfully created")
@@ -89,11 +96,12 @@ function AddActivityDialog(props) {
             });
     };
 
+    // 将时间转换为秒
     let convertTimeToSeconds = (value) => {
         const date = new Date(value)
         return date.getMinutes() * 60 + date.getHours() * 3600
     }
-
+    // 更新表单值
     let updateFormValues = (key, value) => {
         setFormValues(prevFormValues => ({
             ...prevFormValues,
@@ -101,6 +109,7 @@ function AddActivityDialog(props) {
         }))
     };
 
+    // 键盘事件处理，如回车键保存
     let onKeyDown = (e) => {
         if (e.keyCode === KeyCode.ENTER) {
             e.stopPropagation();
@@ -108,13 +117,16 @@ function AddActivityDialog(props) {
         }
     }
 
+    // 格式化工作小时数
     let formatHoursWorkedValue = (value) => parseFloat(value).toFixed(2).toString()
 
+    // 更新工作时间
     let updateTimeWorked = (startTime, endTime) => {
         const timeWorked = (endTime.getHours() * 60 + endTime.getMinutes()) - (startTime.getHours() * 60 + startTime.getMinutes())
         updateFormValues("hoursWorked", formatHoursWorkedValue((timeWorked / 60) || "0"))
     }
 
+    // 更新开始时间
     let updateStartTime = (key, value) => {
         let startTime = new Date(value)
         const endTime = new Date(formValues['endTime'])
@@ -128,6 +140,7 @@ function AddActivityDialog(props) {
         updateTimeWorked(startTime, endTime)
     }
 
+    // 更新结束时间
     let updateEndTime = (key, value) => {
         let endTime = new Date(value)
         const startTime = new Date(formValues['startTime'])
@@ -140,6 +153,7 @@ function AddActivityDialog(props) {
         updateFormValues('endTime', endTime.toString())
         updateTimeWorked(startTime, endTime)
     }
+    // 更新工作小时数
     let updateHoursWorked = (key, value) => {
         const startTime = new Date(formValues['startTime'])
         const endTime = new Date(formValues['endTime'])
@@ -153,7 +167,9 @@ function AddActivityDialog(props) {
     }
 
     return (
+        // onKeyDown属性用于处理键盘事件，如回车键触发保存操作
         <div onKeyDown={onKeyDown}>
+            {/* LightDialog组件用于显示模态对话框 */}
             <LightDialog
                 fullWidth
                 id="addBookLabourDialog"
@@ -166,15 +182,15 @@ function AddActivityDialog(props) {
                     <div>
                         <BlockUi tag="div" blocking={loading}>
                             <EAMSelect
-                                {...processElementInfo(props.layout.booactivity)}
-                                value={formValues['activityCode'] || ''}
-                                options={props.activities.map(activity => {
+                                {...processElementInfo(props.layout.booactivity)}// 传入活动代码的字段信息
+                                value={formValues['activityCode'] || ''} // 绑定表单状态中的活动代码值
+                                options={props.activities.map(activity => { // 生成下拉选项
                                     return {
                                         code: activity.activityCode,
                                         desc: activity.activityNote
                                     }
                                 })}
-                                onChange={createOnChangeHandler("activityCode", null, null, updateFormValues)}
+                                onChange={createOnChangeHandler("activityCode", null, null, updateFormValues)} // 输入变化时的处理函数
                             />
 
                             <EAMAutocomplete
@@ -225,6 +241,7 @@ function AddActivityDialog(props) {
                     </div>
                 </DialogContent>
 
+                {/* 对话框的操作按钮区域 */}
                 <DialogActions>
                     <div>
                         <Button onClick={handleClose} color="primary" disabled={loading}>

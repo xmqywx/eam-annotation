@@ -1,6 +1,6 @@
 import React from 'react';
-import BlockUi from 'react-block-ui';
-import Grid from '@mui/material/Grid';
+import BlockUi from 'react-block-ui';// 用于在加载时显示遮罩层
+import Grid from '@mui/material/Grid';// 来自Material-UI的网格布局组件
 import MeterReadingSearch from "./MeterReadingSearch";
 import MeterReadingList from "./MeterReadingList";
 import WSMeters from "../../../tools/WSMeters";
@@ -10,7 +10,9 @@ import EAMConfirmDialog from "../../components/EAMConfirmDialog";
 /**
  * Meter Readings main class
  */
+// 默认创建读数的确认消息
 const defaultMessageCreate = 'Are you sure you want to create this reading?';
+// 表计回滚时的确认消息
 const rollOverMessageCreate = 'Value is less than the Last Reading, which indicates the meter has rolled over. Is this correct?';
 
 class MeterReading extends React.Component {

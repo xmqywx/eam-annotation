@@ -9,36 +9,46 @@ import { MoreVert, EditOutlined, DeleteOutline, Groups } from '@mui/icons-materi
 import './Activity.css'
 
 /**
- * Display detail of an activity
+ * 显示活动的详细信息的组件
  */
 function Activity(props) {
 
     const { activity, bookLabours, layout, readActivities, postAddActivityHandler, handleError } = props;
 
+    // 使用useState管理编辑模态框的开关状态
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    // 使用useState管理加载状态
     const [loading, setLoading] = useState(false);
+    // 使用useState管理菜单锚点元素
     const [anchorEl, setAnchorEl] = useState(null);
+    // 计算菜单是否打开
     const open = Boolean(anchorEl);
 
+    // 计算总工时
     const totalHours = bookLabours?.map(({ hoursWorked }) => hoursWorked)
         .map(Number)
         .reduce((a, b) => a + b, 0) ?? 0
 
+    // 根据活动的tradeCode生成显示字符串
     const tradeString = activity.tradeCode === '*' ? '' : ` - ${activity.tradeCode}`
 
+    // 处理菜单打开的事件
     const handleOptionsOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
+    // 处理菜单关闭的事件
     const handleOptionsClose = () => {
         setAnchorEl(null);
     };
 
+    // 处理编辑操作
     const handleEdit = (params) => {
         handleOptionsClose();
         setIsEditModalOpen(true);
     };
 
+    // 处理删除操作
     const handleDelete = async (params) => {
         handleOptionsClose();
         try {
@@ -52,6 +62,7 @@ function Activity(props) {
         }
     };
 
+    // 渲染选项菜单
     const renderOptionsMenu = (params) => {
         return (
             <>
@@ -150,7 +161,6 @@ function Activity(props) {
 
                         <Grid item xs={5} sm={2} md={5} lg={2} container className='activityDetailsTile'>
                             <Typography variant='caption' color='gray'>
-                                {/* {layout.ACT.fields.personsreq.text} */}
                                 {<Groups />}
                             </Typography>
                             <Typography>
@@ -160,7 +170,6 @@ function Activity(props) {
 
                         <Grid item xs={5} sm={2} md={5} lg={2} container className='activityDetailsTile'>
                             <Typography variant='caption' color='gray'>
-                                {/* {layout.BOO.fields.hrswork.text} */}
                                 Hrs. Worked<br />(Estimated)
                             </Typography>
                             <Typography>
@@ -170,7 +179,6 @@ function Activity(props) {
 
                         <Grid item xs={5} sm={2} md={5} lg={3} xl={2} container className='activityDetailsTile'>
                             <Typography variant='caption' color='gray'>
-                                {/* {layout.ACT.fields.actstartdate.text} */}
                                 {<CalendarStart />}
                             </Typography>
                             <Typography noWrap>

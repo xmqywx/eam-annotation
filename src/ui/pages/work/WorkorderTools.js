@@ -2,6 +2,7 @@ import { assignCustomFieldFromCustomField, AssignmentType, assignUserDefinedFiel
 import { get } from "lodash";
 
 // MAPPING BETWEEN ENTITY KEYS AND LAYOUT ID
+// 定义实体键与布局ID之间的映射关系。这个映射用于将工单的不同属性映射到对应的字段代码。
 export const layoutPropertiesMap =  {
         description: "description",
         equipment: "equipmentCode",
@@ -69,29 +70,36 @@ export const layoutPropertiesMap =  {
         udfnum10:	"userDefinedFields.udfnum10"
     }
 
+    // 检查工单是否只读的自定义处理函数
 export function isReadOnlyCustomHandler(workOrder) {
+    // 如果工单的系统状态代码为'C'或者没有更新权限，则返回true，表示只读
     return workOrder.systemStatusCode === 'C' || !workOrder.jtAuthCanUpdate;
 }
 
+// 检查特定区域是否可用的函数
 export function isRegionAvailable(regionCode, workOrderLayout) {
     //Fields and tabs
-    const {fields} = workOrderLayout;
+    const {fields} = workOrderLayout;  // 从工单布局中获取字段信息
     //Check according to the case
     switch (regionCode) {
         case 'CUSTOM_FIELDS_EQP':
             //Is button viewequipcustomfields
+            // 检查设备自定义字段按钮是否可操作
             return fields.viewequipcustomfields && fields.viewequipcustomfields.attribute === 'O';
         case 'CUSTOM_FIELDS_PART':
             //Is button viewequipcustomfields
+            // 检查部件自定义字段按钮是否可操作
             return fields.viewequipcustomfields && fields.viewequipcustomfields.attribute === 'O';
         default:
-            return true;
+            return true; // 默认情况下，区域可用
     }
 }
 
+// 将标准工单的值分配给工单的函数
 export const assignStandardWorkOrderValues = (workOrder, standardWorkOrder) => {
-    const swoToWoMap = ([k, v]) => [k, standardWorkOrder[v]];
+    const swoToWoMap = ([k, v]) => [k, standardWorkOrder[v]];  // 映射函数，用于从标准工单获取值
 
+    // 分配不为空的源值
     workOrder = assignValues(workOrder, Object.fromEntries([
         ['classCode', 'woClassCode'],
         ['typeCode', 'workOrderTypeCode'],
@@ -99,12 +107,14 @@ export const assignStandardWorkOrderValues = (workOrder, standardWorkOrder) => {
         ['priorityCode', 'priorityCode']
     ].map(swoToWoMap)), AssignmentType.SOURCE_NOT_EMPTY);
 
+    // 分配目标为空的值
     workOrder = assignValues(workOrder, Object.fromEntries([
         ['description', 'desc'],
     ].map(swoToWoMap)), AssignmentType.DESTINATION_EMPTY);
 
+    // 分配用户定义字段
     workOrder = assignUserDefinedFields(workOrder, standardWorkOrder.userDefinedFields, AssignmentType.DESTINATION_EMPTY);
     workOrder = assignCustomFieldFromCustomField(workOrder, standardWorkOrder.customField, AssignmentType.DESTINATION_EMPTY);
 
-    return workOrder;
+    return workOrder; // 返回更新后的工单
 };

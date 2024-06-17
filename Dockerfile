@@ -3,6 +3,7 @@ FROM node:10.15.0 as builder
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY package.json /usr/src/app/
 RUN npm install
 RUN npm install react-scripts@2.1.3 -g

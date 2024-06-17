@@ -11,34 +11,38 @@ import EAMTextField from 'eam-components/dist/ui/components/inputs-ng/EAMTextFie
 import { formatDateTime } from '../EntityTools';
 
 function MeterReadingContent(props) {
-
     const { reading, disabled, parentProps } = props;
+    // 使用useState钩子管理读数值的状态
     const [readingValue, setReadingValue] = useState('');
 
-    // Clean the input field
+    // 使用useEffect钩子处理输入字段的清理逻辑
     useEffect(() => {
+        // 如果当前的读数值与最后的读数值相同，则清空输入字段
         if (reading.lastValue == readingValue) {
            setReadingValue('');
         }
-    },[reading.lastValue])
+    }, [reading.lastValue]);  // 依赖项为reading.lastValue，当它变化时重新执行
 
+    // 定义创建新读数的函数
     const createNewReading = () => {
+        // 判断是否为翻转值，即当前读数值小于最后的读数值
         const isRollover = reading.rolloverValue && reading.rolloverValue < readingValue;
-        //Initialize meter reading object
+        // 创建新的读数对象
         const newReading = {
-            uom: reading.uom,
-            equipmentCode: reading.equipmentCode,
-            actualValue: readingValue
+            uom: reading.uom,  // 单位
+            equipmentCode: reading.equipmentCode,  // 设备代码
+            actualValue: readingValue  // 实际读数值
         };
-        //Execute parent save handler
+        // 调用父组件的保存处理函数，传入新的读数对象和是否翻转的标志
         parentProps.saveHandler(newReading, isRollover);
     };
 
-    //Check that there is a meter reading to render
+    // 如果没有读数信息，则不渲染任何内容
     if (!reading) {
         return null;
     }
 
+    // 渲染组件
     return (
         <div style={{width: '100%', height: '100%'}}>
             <Accordion defaultExpanded>
@@ -54,7 +58,6 @@ function MeterReadingContent(props) {
                             <div className={`meterContentTitleContentC`}>{reading.meterName}</div>
                         </div>
                         }
-                        
                     </div>
                 </AccordionSummary>
                 <AccordionDetails>

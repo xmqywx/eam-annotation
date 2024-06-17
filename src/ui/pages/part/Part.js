@@ -28,6 +28,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import PlaceIcon from '@mui/icons-material/Place';
 
 const Part = () => {
+    // 使用useEntity自定义钩子初始化和管理部件实体的状态
     const {screenLayout: partLayout, entity: part, loading, readOnly, isModified,
         screenPermissions, screenCode, userData, applicationData, newEntity, commentsComponent,
         isHiddenRegion, getHiddenRegionState, getUniqueRegionID, showEqpTree,
@@ -53,19 +54,17 @@ const Part = () => {
             layoutPropertiesMap
         });
 
-
-    //
-    //
-    //
-
+    // 创建部件后的操作，例如创建评论
     function postCreate() {
         commentsComponent.current.createCommentForNewEntity();
     }
 
+    // 更新部件后的操作，例如创建评论
     function postUpdate() {
         commentsComponent.current.createCommentForNewEntity();
     }
 
+    // 获取部件的区域配置，包括各个标签页的设置
     const getRegions = () => {
         const tabs = partLayout.tabs;
 
@@ -224,10 +223,12 @@ const Part = () => {
         ]
     }
 
+    // 如果部件不存在，则不渲染任何内容
     if (!part) {
         return React.Fragment;
     }
 
+    // 渲染部件的主要UI结构
     return (
         <div className="entityContainer">
             <BlockUi tag="div" blocking={loading} style={{height: "100%", width: '100%'}}>

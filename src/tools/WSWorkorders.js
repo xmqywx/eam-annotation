@@ -2,12 +2,14 @@ import WS from './WS';
 
 /**
  * Handles all calls to REST Api
+ * 处理所有与工单及其相关功能的REST Api调用。
  */
 class WSWorkorders {
 
     //
     // WORK ORDERS
     //
+    
     initWorkOrder(config = {}) {
         return WS._get(`/workorders/init`, config);
     }

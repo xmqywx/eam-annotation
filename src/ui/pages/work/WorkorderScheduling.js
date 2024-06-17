@@ -5,9 +5,17 @@ import EAMAutocomplete from 'eam-components/dist/ui/components/inputs-ng/EAMAuto
 import WS from '../../../tools/WS';
 import EAMUDF from 'ui/components/userdefinedfields/EAMUDF';
 
+// 定义WorkorderScheduling组件，用于管理工单的调度信息
 const WorkorderScheduling = (props) => {
-    const { workOrderLayout, register } = props;
+    
+    const { 
+        // 这个对象包含了工单的布局信息，通常这些信息用于定义工单的各个字段是否显示、如何显示等。这是一个配置对象，用于控制工单表单的布局和行为。
+        workOrderLayout, 
+        // 这是一个函数，通常与表单库（如react-hook-form）一起使用，用于注册输入组件，以便表单库可以跟踪这些输入组件的值的变化、处理表单提交等。
+        register 
+    } = props;
 
+    // 检查工单布局中的各个字段是否被设置为隐藏，如果全部隐藏则不渲染组件
     if (
         'H' === workOrderLayout.fields.reqstartdate.attribute &&
         'H' === workOrderLayout.fields.reqenddate.attribute &&

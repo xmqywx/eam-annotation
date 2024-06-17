@@ -1,4 +1,4 @@
-// MAPPING BETWEEN ENTITY KEYS AND LAYOUT ID
+// 映射实体键到布局ID的字典
 export const layoutPropertiesMap =  {
     partcode: "code",
     category: "categoryCode",
@@ -58,18 +58,17 @@ export const layoutPropertiesMap =  {
 
 class PartTools {
 
-
+    // 检查指定区域是否可用
     isRegionAvailable(regionCode, partLayout) {
-        //Fields and tabs
+        // 从布局中解构字段和标签页
         const {fields, tabs} = partLayout;
-        //Check according to the case
+        // 根据区域代码进行检查
         switch (regionCode) {
-            case 'CUSTOM_FIELDS':
-                //Is the block 6
+            case 'CUSTOM_FIELDS': // 自定义字段区域
+                // 检查区块6是否存在且属性不为'H'
                 return fields.block_6 && fields.block_6.attribute !== 'H';
-            default:/*All other regions*/
-                //Regions in here:
-                // Where used
+            default: // 其他所有区域
+                // 检查标签页中的字段是否始终可用
                 return tabs.fields[regionCode] && tabs.fields[regionCode].alwaysAvailable;
         }
     }

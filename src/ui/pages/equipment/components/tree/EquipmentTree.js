@@ -3,14 +3,14 @@ import EAMTree from '../../../../../ui/components/eqtree/EAMTree';
 
 class EquipmentTree extends Component {
 
-
+    // 定义树形视图容器的样式
     treeDivStyle= {
         height: "calc(100% - 56px)",
         backgroundColor: 'white',
         width: "100%"
     }
 
-
+    // 定义头部样式
     headerStyle = {
         fontWeight: 500,
         paddingLeft: 10,
@@ -26,8 +26,8 @@ class EquipmentTree extends Component {
 
             <div style={{height: "100%"}}>
                 {
-                this.props.hideHeader ? null
-                    : <div style={this.headerStyle}>
+                this.props.hideHeader ? null // 根据hideHeader属性决定是否隐藏头部
+                    : <div style={this.headerStyle}> 
                         <div>Equipment Tree</div>
                     </div>
                 }
@@ -35,7 +35,6 @@ class EquipmentTree extends Component {
                     <EAMTree history={this.props.history}/>
                 </div>
             </div>
-
         )
     }
 }

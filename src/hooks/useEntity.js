@@ -14,6 +14,61 @@ import { createOnChangeHandler, processElementInfo } from "eam-components/dist/u
 import { get } from "lodash";
 import useFieldsValidator from "eam-components/dist/ui/components/inputs-ng/hooks/useFieldsValidator";
 
+/**
+ * useEntity 是一个自定义 React 钩子，用于管理实体（如设备、位置等）的 CRUD（创建、读取、更新、删除）操作和状态。
+ * 这个钩子封装了与实体相关的逻辑，使得组件可以更简洁地处理实体数据。
+ * 
+ * @param {Object} params - 配置参数对象，包含以下属性:
+ *   - {Object} WS - 包含 CRUD 方法的 Web 服务对象。
+ *   - {Object} postActions - 包含 CRUD 操作后的回调函数。
+ *   - {Object} handlers - 包含特定字段或操作的处理函数。
+ *   - {string} entityCode - 实体的代码。
+ *   - {string} entityDesc - 实体的描述。
+ *   - {string} entityURL - 实体的基础 URL。
+ *   - {string} entityCodeProperty - 实体代码的属性名。
+ *   - {string} screenProperty - 屏幕属性名，用于从 Redux store 获取屏幕代码。
+ *   - {string} layoutProperty - 布局属性名，用于从 Redux store 获取布局设置。
+ *   - {Object} layoutPropertiesMap - 布局属性映射。
+ *   - {Function} isReadOnlyCustomHandler - 自定义只读状态处理函数。
+ *   - {Function} onMountHandler - 挂载时的处理函数。
+ *   - {Function} onUnmountHandler - 卸载时的处理函数。
+ *   - {string} codeQueryParamName - 代码查询参数名称。
+ * 
+ * @returns {Object} 包含以下属性和方法的对象:
+ *   - {string} screenCode - 屏幕代码。
+ *   - {Object} screenLayout - 屏幕布局设置。
+ *   - {Object} screenPermissions - 屏幕权限。
+ *   - {Object} entity - 当前实体对象。
+ *   - {boolean} newEntity - 是否为新建实体。
+ *   - {Function} setEntity - 设置实体对象的函数。
+ *   - {boolean} loading - 加载状态。
+ *   - {boolean} readOnly - 只读状态。
+ *   - {boolean} isModified - 实体是否被修改。
+ *   - {Object} userData - 用户数据。
+ *   - {Object} applicationData - 应用程序数据。
+ *   - {Function} isHiddenRegion - 判断区域是否隐藏的函数。
+ *   - {Function} getHiddenRegionState - 获取隐藏区域状态的函数。
+ *   - {Function} getUniqueRegionID - 获取唯一区域ID的函数。
+ *   - {Object} commentsComponent - 评论组件的引用。
+ *   - {Function} setLayoutProperty - 设置布局属性的函数。
+ *   - {boolean} showEqpTree - 是否显示设备树。
+ *   - {Function} showError - 显示错误的函数。
+ *   - {Function} showNotification - 显示通知的函数。
+ *   - {Function} handleError - 处理错误的函数。
+ *   - {Function} showWarning - 显示警告的函数。
+ *   - {Function} toggleHiddenRegion - 切换隐藏区域的函数。
+ *   - {Function} setRegionVisibility - 设置区域可见性的函数。
+ *   - {Function} newHandler - 新建处理函数。
+ *   - {Function} saveHandler - 保存处理函数。
+ *   - {Function} deleteHandler - 删除处理函数。
+ *   - {Function} copyHandler - 复制处理函数。
+ *   - {Function} updateEntityProperty - 更新实体属性的函数。
+ *   - {Function} register - 注册函数。
+ *   - {Function} setNewEntity - 设置新实体状态的函数。
+ *   - {Function} setLoading - 设置加载状态的函数。
+ *   - {Function} setReadOnly - 设置只读状态的函数。
+ *   - {Function} createEntity - 创建实体的函数。
+ */
 const useEntity = (params) => {
 
     const {WS, postActions, handlers, entityCode, entityDesc, entityURL, entityCodeProperty, screenProperty, layoutProperty, layoutPropertiesMap,
@@ -276,6 +331,22 @@ const useEntity = (params) => {
     //
     //
     //
+    console.log({screenCode, screenLayout, screenPermissions,
+        entity, newEntity, setEntity, loading, readOnly, isModified,
+        userData, applicationData,
+        isHiddenRegion: isHiddenRegionConst,
+        getHiddenRegionState: getHiddenRegionStateConst,
+        getUniqueRegionID: getUniqueRegionIDConst,
+        commentsComponent,
+        setLayoutProperty: setLayoutPropertyConst,
+        showEqpTree,
+        // Dispatchers
+        showError: showErrorConst, showNotification: showNotificationConst, handleError: handleErrorConst, showWarning: showWarningConst,
+        toggleHiddenRegion: toggleHiddenRegionConst, setRegionVisibility: setRegionVisibilityConst,
+        //
+        newHandler, saveHandler, deleteHandler, copyHandler, updateEntityProperty, register,
+        setNewEntity, setLoading, setReadOnly, createEntity,
+    });
     return {screenCode, screenLayout, screenPermissions,
         entity, newEntity, setEntity, loading, readOnly, isModified,
         userData, applicationData,

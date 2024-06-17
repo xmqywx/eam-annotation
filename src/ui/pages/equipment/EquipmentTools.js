@@ -1,7 +1,14 @@
 import WSEquipment from "tools/WSEquipment";
 
 class EquipmentTools {
-
+    /**
+     * 判断指定区域是否可用。
+     * 
+     * @param {string} regionCode 区域代码
+     * @param {Object} equipmentLayout 设备布局对象，包含 fields 和 tabs
+     * @param {string} equipmentType 设备类型
+     * @returns {boolean} 区域是否可用
+     */
     isRegionAvailable(regionCode, equipmentLayout, equipmentType) {
         //Fields and tabs
         const {fields, tabs} = equipmentLayout;
@@ -18,6 +25,13 @@ class EquipmentTools {
         }
     }
 
+    /**
+     * 返回一个函数，用于更新设备状态，并在特定条件下显示通知。
+     * 
+     * @param {Function} updateProperty 更新属性的函数
+     * @param {Function} showNotification 显示通知的函数
+     * @returns {Function} 更新状态的函数
+     */
     getUpdateStatus(updateProperty, showNotification) {
         return (key, value) => {
             if (key === 'statusCode' && value === 'D') {
@@ -31,6 +45,12 @@ class EquipmentTools {
 export default new EquipmentTools();
 
 
+/**
+ * 当类别改变时更新相关属性。
+ * 
+ * @param {string} category 类别
+ * @param {Function} updateProperty 更新属性的函数
+ */
 export const onCategoryChange = (category, updateProperty) => {
 
     if(!category) {
@@ -56,7 +76,16 @@ export const onCategoryChange = (category, updateProperty) => {
     
 }
 
-// Used in hierarchies to handle dependency-related behavior
+/**
+ * 处理依赖输入的变化。
+ * 
+ * @param {string} value 输入值
+ * @param {string} dependencyKey 依赖键
+ * @param {Object} dependencyKeysMap 依赖键映射
+ * @param {Object} equipment 设备对象
+ * @param {Function} updateEquipmentProperty 更新设备属性的函数
+ * @param {Function} showWarning 显示警告的函数
+ */
 export const onChangeDependentInput = (
     value,
     dependencyKey,
@@ -85,18 +114,31 @@ export const onChangeDependentInput = (
 };
 
 // Check whether there is at least one dependency set
+/**
+ * 检查是否设置了至少一个依赖。
+ * 
+ * @param {Object} equipment 设备对象
+ * @param {Object} dependencyKeysMap 依赖键映射
+ * @returns {boolean} 是否设置了依赖
+ */
 export const isDependencySet = (equipment, dependencyKeysMap) => {
     return Object.values(dependencyKeysMap)
         .map((depKey) => equipment[depKey])
         .includes('true');
 }
 
-
+/**
+ * 检查设备是否已关闭。
+ * 
+ * @param {Object} equipment 设备对象
+ * @returns {boolean} 设备是否已关闭
+ */
 export function isClosedEquipment(equipment) {
     return equipment.systemStatusCode === 'D';
 }
 
 // MAPPING BETWEEN ENTITY KEYS AND LAYOUT ID
+// 映射实体键和布局ID
 const equipmentLayoutPropertiesMap =  {
     equipmentno: "code",
     alias: "alias",
@@ -239,6 +281,13 @@ export const COST_ROLL_UP_CODES = {
     primarySystem: "hierarchyPrimarySystemCostRollUp",
 }
 
+/**
+ * 更新成本汇总属性。
+ * 
+ * @param {string} costRollUpCode 成本汇总代码
+ * @param {string} equipmentCode 设备代码
+ * @param {Function} updatingFunction 更新函数
+ */
 export const updateCostRollUpProperty = (
     costRollUpCode,
     equipmentCode,

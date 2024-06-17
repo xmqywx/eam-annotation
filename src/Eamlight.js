@@ -1,9 +1,17 @@
+/**
+ * 主要的 React 组件，设置应用的路由和主题。它处理用户认证、加载状态，并路由到应用的不同部分，如设备搜索、工单搜索等。
+ */
+
+// 引入 CSS 样式文件
 import './Eamlight.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
+// 引入 React 和相关库
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+
+// 引入应用内部的组件
 import ApplicationLayoutContainer from './ui/layout/ApplicationLayoutContainer';
 import EamlightMenuContainer from './ui/layout/menu/EamlightMenuContainer';
 import WorkorderSearchContainer from './ui/pages/work/search/WorkorderSearchContainer';
@@ -28,11 +36,12 @@ import config from './config';
 import Equipment from 'ui/pages/equipment/Equipment';
 import Report from 'ui/pages/report/Report';
 import ReleaseNotesPage from "./ui/pages/releaseNotes/ReleaseNotes";
+import TestContainer from 'ui/pages/test/testContainer';
 
 export const releaseNotesPath = "/releasenotes";
 
 class Eamlight extends Component {
-
+// 定义 BlockUI 组件的样式
     blockUiStyle = {
         height: "100%",
         display: "flex",
@@ -47,6 +56,7 @@ class Eamlight extends Component {
 
     render() {
         // Display login screen
+        // 如果用户未登录且登录方式为标准方式，则显示登录界面
         if (!this.props.inforContext && process.env.REACT_APP_LOGIN_METHOD === 'STD') {
             return (
               <ThemeProvider theme={Themes[config.theme.DEFAULT]}>
@@ -55,6 +65,7 @@ class Eamlight extends Component {
             )
         }
 
+        // 如果用户数据存在但账户无效或屏幕布局加载失败，则显示错误信息页面
         if (this.props.userData) {
             if (this.props.userData.invalidAccount) {
                 return (
@@ -75,6 +86,7 @@ class Eamlight extends Component {
         }
 
         // User data still not there, display loading page
+        // 如果用户数据或应用数据不存在，显示加载界面
         if (!this.props.userData || !this.props.applicationData) {
             this.props.initializeApplication();
             return (
@@ -84,11 +96,14 @@ class Eamlight extends Component {
             )
         }
 
+        // 定义路由路径正则表达式
         const eqpRegex = ["/asset", "/position", "/system", "/location", "/workorder", "/installeqp"].map(e => `${e}/:code(.+)?`)
 
+        // 选择主题
         const selectedTheme = Themes[config.theme[this.props.applicationData.EL_ENVIR] || config.theme.DEFAULT] || Themes.DANGER;
 
         // Render real application once user data is there and user has an EAM account
+        // 渲染应用主界面
         return (
                <StyledEngineProvider injectFirst>
                      <ThemeProvider theme={selectedTheme}>
@@ -137,6 +152,9 @@ class Eamlight extends Component {
 
                                                  <Route path="/report"
                                                         component={Report}/>
+
+                                                 <Route path="/test"
+                                                        component={TestContainer}/>
 
                                                  <Route path={eqpRegex}
                                                         component={Equipment}/>

@@ -3,11 +3,12 @@ import FontIcon from '@mui/material/Icon';
 import EAMCheckbox from 'eam-components/dist/ui/components/inputs-ng/EAMCheckbox';
 import EAMBarcodeScanner from 'eam-components/dist/ui/components/inputs-ng/components/EAMBarcodeScanner';
 
+// 定义搜索类型常量
 const SEARCH_TYPES = {
     PART: {
-        text: "Parts",
-        value: "PART",
-        code: "PART",
+        text: "Parts",  // 显示文本
+        value: "PART",  // 搜索值
+        code: "PART",  // 类型代码
     },
     EQUIPMENT_TYPES: {
         text: "Equipment",
@@ -21,25 +22,28 @@ const SEARCH_TYPES = {
     }
 }
 
+// 定义搜索图标的样式
 const searchIconStyle = {
-    color: "#02a2f2",
-    fontSize: 25,
-    position: "absolute",
-    right: -4,
-    top: 5
+    color: "#02a2f2",  // 图标颜色
+    fontSize: 25,  // 图标大小
+    position: "absolute",  // 定位方式
+    right: -4,  // 右边距
+    top: 5  // 顶部边距
 };
 
+// 定义搜索头部组件
 export default class SearchHeader extends React.Component {
 
     state = {
-        searchOn: Object.values(SEARCH_TYPES).map(v => v.value),
-        isPhoneScreen: false,
+        searchOn: Object.values(SEARCH_TYPES).map(v => v.value),  // 当前激活的搜索类型
+        isPhoneScreen: false,  // 是否为手机屏幕尺寸
     };
 
     componentDidMount() {
-        this.searchInput.focus();
+        this.searchInput.focus();  // 组件挂载后，输入框自动获取焦点
     }
 
+    // 渲染类型复选框的方法
     renderTypeCheckbox(searchType) {
         const { searchOn, setState } = this.state;
         return <EAMCheckbox
@@ -71,6 +75,7 @@ export default class SearchHeader extends React.Component {
             />
     }
 
+    // 渲染图标的方法
     renderIcon = () => (
         <>
             <img src="images/eamlight_logo.png" alt="EAM Light Logo" style={{paddingLeft: 20, paddingRight: 10}}/>
@@ -80,6 +85,7 @@ export default class SearchHeader extends React.Component {
         </>
     );
 
+    // 渲染输入框的方法
     renderInput = () => {
         const entityTypes = this.state.searchOn.join(',');
         return (
@@ -96,6 +102,7 @@ export default class SearchHeader extends React.Component {
         );
     };
 
+    // 渲染过滤器的方法
     renderFilters = () => {
         const { showTypes } = this.props;
         return (
@@ -111,6 +118,7 @@ export default class SearchHeader extends React.Component {
         );
     }
 
+    // 渲染整个组件的方法
     render() {
         return (
             <div
@@ -142,6 +150,7 @@ export default class SearchHeader extends React.Component {
         );
     }
 
+    // 处理搜索输入的方法
     handleSearchInput = (event) => {
         this.props.fetchDataHandler(event.target.value, this.state.searchOn.join(','));
     }

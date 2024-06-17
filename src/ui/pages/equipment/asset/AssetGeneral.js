@@ -11,14 +11,14 @@ import EAMUDF from 'ui/components/userdefinedfields/EAMUDF';
 const AssetGeneral = (props) => {
 
     const {
-        equipment,
-        newEntity,
-        statuses,
-        register,
-        userData,
-        screenCode,
-        screenPermissions
-    } = props;
+        equipment,  // 设备对象
+        newEntity,  // 是否为新实体的标志
+        statuses,  // 状态选项列表
+        register,  // 注册函数，用于连接表单字段
+        userData,  // 用户数据
+        screenCode,  // 屏幕代码
+        screenPermissions  // 屏幕权限
+    } = props;  // 从props中解构出各个属性
 
     return (
         <React.Fragment>

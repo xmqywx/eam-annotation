@@ -25,30 +25,30 @@ const styles = {
     topBarSpan: {
         fontSize: '12px',
     }
-};
+}; // 定义顶部导航栏的样式
 
 export default withStyles(styles)(function ApplicationLayout(props) {
     const { classes, applicationData, userData, scannedUser, updateScannedUser, handleError, showNotification } = props;
 
-    const environment = applicationData.EL_ENVIR;
+    const environment = applicationData.EL_ENVIR; // 获取应用环境变量
 
-    const [menuCompacted, setMenuCompacted] = useState(false)
-    const [mobileMenuActive, setMobileMenuActive] = useState(false)
-    const theme = useTheme();
-    const dispatch = useDispatch();
-    const showEqpTree = useSelector(state => state.ui.layout.showEqpTree)
-    const equipment = useSelector(state => state.ui.layout.equipment)
-    const location = useLocation()
+    const [menuCompacted, setMenuCompacted] = useState(false) // 定义状态变量menuCompacted，用于控制菜单是否压缩
+    const [mobileMenuActive, setMobileMenuActive] = useState(false) // 定义状态变量mobileMenuActive，用于控制移动菜单是否激活
+    const theme = useTheme(); // 获取当前主题
+    const dispatch = useDispatch(); // 获取dispatch函数，用于发送Redux actions
+    const showEqpTree = useSelector(state => state.ui.layout.showEqpTree) // 从Redux状态中获取showEqpTree值
+    const equipment = useSelector(state => state.ui.layout.equipment) // 从Redux状态中获取equipment值
+    const location = useLocation() // 获取当前URL的location对象
 
     const menuIconStyle = {
         color: "white",
         fontSize: 18
-    }
+    } // 定义菜单图标的样式
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.get('maximize') && setMenuCompacted(true);
-    }, [])
+    }, []) // 使用useEffect钩子监听URL参数变化，控制菜单压缩状态
 
     const topbar = (
         <div id="topbar" style={{backgroundColor: theme.palette.primary.main}}>
@@ -86,20 +86,20 @@ export default withStyles(styles)(function ApplicationLayout(props) {
                 <UserInfoContainer/>
             </div>
         </div>
-    );
+    ); // 定义顶部导航栏的JSX结构
 
-    const isInsideIframe = window.self !== window.top;
-    const isInsideAllowedURL = document.referrer.match('^' + applicationData.EL_IFURL);
-    const showTopBar = !(isInsideAllowedURL && isInsideIframe);
+    const isInsideIframe = window.self !== window.top; // 判断当前页面是否在iframe中
+    const isInsideAllowedURL = document.referrer.match('^' + applicationData.EL_IFURL); // 判断来源URL是否允许
+    const showTopBar = !(isInsideAllowedURL && isInsideIframe); // 根据条件判断是否显示顶部导航栏
 
-    const loadAfterLogin = GridTools.getURLParameterByName("loadAfterLogin") === 'true';
+    const loadAfterLogin = GridTools.getURLParameterByName("loadAfterLogin") === 'true'; // 判断URL参数中是否有loadAfterLogin=true
 
     const showScan = applicationData.serviceAccounts && applicationData.serviceAccounts.includes( userData.eamAccount.userCode) && (!scannedUser || !scannedUser.userCode)
         && <ScanUser
                 updateScannedUser={updateScannedUser}
                 showNotification={showNotification}
                 handleError={handleError}
-            />;
+            />; // 根据条件判断是否显示扫描用户组件
 
     return (
         <div id="maindiv" className={(menuCompacted) ? 'SlimMenu' : ''} onClick={() => !menuCompacted && mobileMenuActive && setMobileMenuActive(false)}>

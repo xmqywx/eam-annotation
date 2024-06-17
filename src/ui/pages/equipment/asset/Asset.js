@@ -44,6 +44,7 @@ const Asset = () => {
     const [part, setPart] = useState(null);
     const [statuses, setStatuses] = useState([]);
 
+    // useEntity 是一个自定义 React 钩子，用于管理实体（如设备、位置等）的 CRUD（创建、读取、更新、删除）操作和状态。这个钩子封装了与实体相关的逻辑，使得组件可以更简洁地处理实体数据
     const {screenLayout: assetLayout, entity: equipment, loading, readOnly, isModified,
         screenPermissions, screenCode, userData, applicationData, newEntity, commentsComponent,
         isHiddenRegion, getHiddenRegionState, getUniqueRegionID, showEqpTree,
@@ -55,20 +56,20 @@ const Asset = () => {
                 read: WSEquipment.getEquipment,
                 update: WSEquipment.updateEquipment,
                 delete: WSEquipment.deleteEquipment,
-                new:  WSEquipment.initEquipment.bind(null, "A"), // TODO: again we have extra arguments. What to do?
+                new:  WSEquipment.initEquipment.bind(null, "A"), // 绑定初始化设备函数，类型为"A"
             },
             postActions: {
-                read: postRead,
-                new: postInit
+                read: postRead, // 读取后的操作
+                new: postInit // 新建后的操作
             },
-            isReadOnlyCustomHandler: isClosedEquipment,
-            entityCode: "OBJ",
-            entityDesc: "Asset",
-            entityURL: "/asset/",
-            entityCodeProperty: "code",
-            screenProperty: "assetScreen",
-            layoutProperty: "assetLayout",
-            layoutPropertiesMap: assetLayoutPropertiesMap
+            isReadOnlyCustomHandler: isClosedEquipment, // 自定义只读状态处理函数
+            entityCode: "OBJ", // 实体代码
+            entityDesc: "Asset", // 实体描述
+            entityURL: "/asset/", // 实体URL
+            entityCodeProperty: "code", // 实体代码属性
+            screenProperty: "assetScreen", // 屏幕属性
+            layoutProperty: "assetLayout", // 布局属性
+            layoutPropertiesMap: assetLayoutPropertiesMap // 布局属性映射
         });
 
     useEffect(() => {

@@ -14,15 +14,15 @@ import { createOnChangeHandler, processElementInfo } from 'eam-components/dist/u
 const AdditionalCostDialog = (props) => {
     const [additionalCost, setAdditionalCost] = useState({ 
         costType: "MISC" , 
-        date: new Date()});
-    const [activityList, setActivityList] = useState([]);
-    const [loading, setLoading] = useState(false);
+        date: new Date()}); // 使用useState管理额外成本的状态
+    const [activityList, setActivityList] = useState([]); // 使用useState管理活动列表的状态
+    const [loading, setLoading] = useState(false); // 使用useState管理加载状态
 
     useEffect(() => {
         if (props.isDialogOpen) {
             loadActivities(props.workorder);
         }
-    }, [props.isDialogOpen]);
+    }, [props.isDialogOpen]); // 使用useEffect处理对话框打开时的副作用
 
     const loadActivities = (workorder) => {
         WSWorkorders.getWorkOrderActivities(workorder.number).then((response) => {
@@ -30,21 +30,21 @@ const AdditionalCostDialog = (props) => {
         }).catch((error) => {
             props.handleError(error);
         });
-    };
+    }; // 定义加载活动的函数
 
     const transformActivities = (activities) => {
         return activities.map((activity) => ({
             code: activity.activityCode,
             desc: activity.tradeCode
         }));
-    }
+    } // 定义转换活动数据的函数
 
     const updateAdditionalCostProperty = (key, value) => {
         setAdditionalCost((prevAdditionalCost) => ({
             ...prevAdditionalCost,
             [key]: value,
         }));
-    };
+    }; // 定义更新额外成本属性的函数
 
     const handleSave = () => {
         setLoading(true);
@@ -52,7 +52,7 @@ const AdditionalCostDialog = (props) => {
             .then(props.successHandler)
             .catch(props.handleError)
             .finally(() => setLoading(false));
-    };
+    }; // 定义处理保存操作的函数
 
     return (
         <Dialog

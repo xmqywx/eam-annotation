@@ -9,24 +9,28 @@ import { Stack } from '@mui/material';
 
 /**
  * Panel Activities and Book labor
+ * 主组件，用于展示和管理活动及劳动预订
  */
 function Activities(props) {
-    let [activities, setActivities] = useState([]);
-    let [bookLaboursByActivity, setBookLaboursByActivity] = useState({});
-    let [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
-    let [isBookLaborModalOpen, setIsBookLaborModalOpen] = useState(false);
-    let [loading, setLoading] = useState(false);
+    // 状态管理
+    let [activities, setActivities] = useState([]); // 活动列表
+    let [bookLaboursByActivity, setBookLaboursByActivity] = useState({}); // 按活动分类的劳动预订
+    let [isActivityModalOpen, setIsActivityModalOpen] = useState(false); // 控制添加活动对话框的显示
+    let [isBookLaborModalOpen, setIsBookLaborModalOpen] = useState(false); // 控制添加劳动预订对话框的显示
+    let [loading, setLoading] = useState(false); // 加载状态
 
     let {workorder, layout, disabled, handleError} = props;
 
     useEffect(() => {
+        // 在工单变更时重新加载活动和劳动预订
         readActivities(workorder);
         readBookLabours(workorder);
     }, [workorder])
 
     /**
      * Load all activities
-     * @param workOrderNumber
+     * 加载所有活动
+     * @param workOrderNumber 工单编号
      */
     let readActivities = workOrderNumber => {
         setLoading(true)
@@ -43,7 +47,8 @@ function Activities(props) {
 
     /**
      * Load all book labours
-     * @param workOrderNumber
+     * 加载所有劳动预订
+     * @param workOrderNumber 工单编号
      */
     let readBookLabours = workOrderNumber => {
         WSWorkorders.getBookingLabours(workOrderNumber)
@@ -63,6 +68,7 @@ function Activities(props) {
             .catch(console.error);
     }
 
+     // 如果正在加载或工单不存在，显示空元素
     if (loading || !workorder) {
         return (
             <div></div>
@@ -71,6 +77,7 @@ function Activities(props) {
 
     return (
         <div id="activities">
+            {/* 显示所有活动 */}
             {activities.map((activity, index) => {
                 return <Activity
                     key={activity.activityCode}
@@ -83,6 +90,7 @@ function Activities(props) {
                     />
             })}
 
+            {/* 操作按钮 */}
             <Stack direction="row" spacing={2} style={{marginTop: 15}}>
                 <Button onClick={() => setIsActivityModalOpen(true)} color="primary" 
                         disabled={disabled || !layout.ACT.insertAllowed} variant="outlined">
@@ -95,6 +103,7 @@ function Activities(props) {
                 </Button>
             </Stack>
 
+            {/* 添加活动对话框 */}
             <AddActivityDialogContainer
                 open={isActivityModalOpen}
                 workorderNumber={workorder}
@@ -103,6 +112,7 @@ function Activities(props) {
                 postAddActivityHandler={props.postAddActivityHandler}
                 newActivityCode={activities[activities.length - 1] ? parseInt(activities[activities.length - 1].activityCode) + 5 : 5} />
 
+            {/* 添加劳动预订对话框 */}
             <AddBookLabourDialogContainer
                 open={isBookLaborModalOpen}
                 activities={activities}
@@ -120,4 +130,5 @@ function Activities(props) {
     )
 }
 
+// 使用React.memo优化性能
 export default React.memo(Activities);
