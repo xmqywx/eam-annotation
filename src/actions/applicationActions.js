@@ -59,6 +59,79 @@ export function getUserInfo() {
         const fetchScreenLayout = (response) => {
             let userdata = response.body.data; // 用户数据
 
+            // 将获取到的数据权限进行更改
+            // userdata.assetScreen = "OSOBJA";
+            // userdata.screens.OSOBJA = {
+            //     "screenCode": "OSOBJA",
+            //     "startupAction": "D",
+            //     "parentScreen": "OSOBJA",
+            //     "screenDesc": "Assets",
+            //     "readAllowed": true,
+            //     "creationAllowed": false,
+            //     "deleteAllowed": false,
+            //     "updateAllowed": false,
+            //     "tab": "",
+            //     "tabAlwaysDisplayed": true,
+            //     "tabAvailable": true
+            // }
+            // userdata.locationScreen = "OSOBJL";
+            // userdata.screens.OSOBJL = {
+            //     "screenCode": "OSOBJL",
+            //     "startupAction": "D",
+            //     "parentScreen": "OSOBJL",
+            //     "screenDesc": "Location",
+            //     "readAllowed": true,
+            //     "creationAllowed": false,
+            //     "deleteAllowed": false,
+            //     "updateAllowed": false,
+            //     "tab": "",
+            //     "tabAlwaysDisplayed": true,
+            //     "tabAvailable": true
+            // }
+            // userdata.partScreen = "SSPART";
+            // userdata.screens.SSPART = {
+            //     "screenCode": "SSPART",
+            //     "startupAction": "D",
+            //     "parentScreen": "SSPART",
+            //     "screenDesc": "Part",
+            //     "readAllowed": true,
+            //     "creationAllowed": false,
+            //     "deleteAllowed": false,
+            //     "updateAllowed": false,
+            //     "tab": "",
+            //     "tabAlwaysDisplayed": true,
+            //     "tabAvailable": true
+            // }
+            // userdata.systemScreen = "OSOBJS";
+            // userdata.screens.OSOBJS = {
+            //     "screenCode": "OSOBJS",
+            //     "startupAction": "D",
+            //     "parentScreen": "OSOBJS",
+            //     "screenDesc": "System",
+            //     "readAllowed": true,
+            //     "creationAllowed": false,
+            //     "deleteAllowed": false,
+            //     "updateAllowed": false,
+            //     "tab": "",
+            //     "tabAlwaysDisplayed": true,
+            //     "tabAvailable": true
+            // }
+
+            
+            // userdata.screens.WSJOBS = {
+            //     "screenCode": "WSJOBS",
+            //     "startupAction": "D",
+            //     "parentScreen": "WSJOBS",
+            //     "screenDesc": "Work Orders",
+            //     "readAllowed": true,
+            //     "creationAllowed": true,
+            //     "deleteAllowed": true,
+            //     "updateAllowed": true,
+            //     "tab": "",
+            //     "tabAlwaysDisplayed": true,
+            //     "tabAvailable": true
+            // }
+
             // 当所有promise完成，并行请求屏幕布局数据
             Promise.all(createPromiseArray(userdata))
                 .then((values) => {

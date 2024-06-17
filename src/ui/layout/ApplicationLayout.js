@@ -115,7 +115,7 @@ export default withStyles(styles)(function ApplicationLayout(props) {
                     </div>
                 </div>
             }
-            {showScan}
+
         </div>
 
     )

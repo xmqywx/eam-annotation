@@ -8,7 +8,8 @@ import SyncedQueryParamsEAMGridContext from "../../../../../tools/SyncedQueryPar
 const cellRenderer = ({ column, value, row }) => {  // 定义cellRenderer函数，用于自定义网格单元格的渲染逻辑
     if (column.id === 'equipmentno') {
         return (
-            <Typography>  // 使用Typography组件显示文本
+            // 使用Typography组件显示文本
+            <Typography>
                 {/*使用Link组件创建链接，链接到具体的资产页面 */}
                 <Link to={"/asset/" + value + (row.values.organization ? '%23' + row.values.organization : '')}>
                     {/* 显示资产编号 */}
